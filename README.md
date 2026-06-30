@@ -101,3 +101,18 @@ route outside 0.0.0.0 0.0.0.0 192.168.88.1
 end
 
 write memory
+
+
+
+/routing rule remove [find comment="FULL-TUNNEL main via WARP only"]
+/routing rule remove [find comment="FULL-TUNNEL VLAN20 via WARP only"]
+/routing rule remove [find comment="FULL-TUNNEL VLAN99 via WARP only"]
+/ip firewall address-list remove [find list=WARP-ONLY address=192.168.88.0/24]
+/ip firewall address-list remove [find list=WARP-ONLY address=172.22.20.0/24]
+/ip firewall address-list remove [find list=WARP-ONLY address=172.22.99.0/24]
+/routing rule add comment="FULL-TUNNEL main via WARP only" src-address=192.168.88.0/24 action=lookup-only-in-table table=to-warp
+/routing rule add comment="FULL-TUNNEL VLAN20 via WARP only" src-address=172.22.20.0/24 action=lookup-only-in-table table=to-warp
+/routing rule add comment="FULL-TUNNEL VLAN99 via WARP only" src-address=172.22.99.0/24 action=lookup-only-in-table table=to-warp
+/ip firewall address-list add list=WARP-ONLY address=192.168.88.0/24 comment="Full-tunnel main"
+/ip firewall address-list add list=WARP-ONLY address=172.22.20.0/24 comment="Full-tunnel IoT VLAN20"
+/ip firewall address-list add list=WARP-ONLY address=172.22.99.0/24 comment="Full-tunnel management VLAN99"
