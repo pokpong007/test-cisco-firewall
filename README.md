@@ -115,4 +115,6 @@ write memory
 /routing rule add comment="FULL-TUNNEL VLAN99 via WARP only" src-address=172.22.99.0/24 action=lookup-only-in-table table=to-warp
 /ip firewall address-list add list=WARP-ONLY address=192.168.88.0/24 comment="Full-tunnel main"
 /ip firewall address-list add list=WARP-ONLY address=172.22.20.0/24 comment="Full-tunnel IoT VLAN20"
-/ip firewall address-list add list=WARP-ONLY address=172.22.99.0/24 comment="Full-tunnel management VLAN99"
+/ip firewall address-list add list=WARP-ONLY address=172.22.99.0/24 comment="Full-tunnel management VLAN99
+
+/system backup load name=before-warp-vlan-only-20260630.backup
