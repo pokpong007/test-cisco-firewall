@@ -118,3 +118,9 @@ write memory
 /ip firewall address-list add list=WARP-ONLY address=172.22.99.0/24 comment="Full-tunnel management VLAN99
 
 /system backup load name=before-warp-vlan-only-20260630.backup
+
+/routing rule disable [find comment="FULL-TUNNEL main via WARP only"]
+/ip firewall address-list disable [find list=WARP-ONLY address=192.168.88.0/24]
+/ip dhcp-client set [find interface=ether1] disabled=no add-default-route=yes use-peer-dns=no
+/ip dhcp-client renew [find interface=ether1]
+/ip firewall nat set [find chain=srcnat out-interface=ether1 action=masquerade] disabled=no
