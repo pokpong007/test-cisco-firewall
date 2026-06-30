@@ -124,3 +124,17 @@ write memory
 /ip dhcp-client set [find interface=ether1] disabled=no add-default-route=yes use-peer-dns=no
 /ip dhcp-client renew [find interface=ether1]
 /ip firewall nat set [find chain=srcnat out-interface=ether1 action=masquerade] disabled=no
+
+..
+
+/routing rule disable [find table=to-warp]
+/ip firewall address-list disable [find list=WARP-ONLY]
+/ip firewall filter disable [find comment="KILL-SWITCH: block WARP VLANs to WAN"]
+
+/ip dhcp-client set [find interface=ether1] disabled=no add-default-route=yes default-route-distance=1 use-peer-dns=no
+/ip dhcp-client renew [find interface=ether1]
+
+/ip dns set allow-remote-requests=yes servers=1.1.1.1,8.8.8.8
+
+/ip firewall filter add chain=forward action=accept src-address-list=LOCAL-NETS out-interface-list=WAN comment="EMERGENCY allow all local nets to WAN" place-before=0
+/ip firewall nat add chain=srcnat action=masquerade src-address-list=LOCAL-NETS out-interface-list=WAN comment="EMERGENCY NAT all local nets to WAN"
