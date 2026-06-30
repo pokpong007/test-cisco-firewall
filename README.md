@@ -138,3 +138,24 @@ write memory
 
 /ip firewall filter add chain=forward action=accept src-address-list=LOCAL-NETS out-interface-list=WAN comment="EMERGENCY allow all local nets to WAN" place-before=0
 /ip firewall nat add chain=srcnat action=masquerade src-address-list=LOCAL-NETS out-interface-list=WAN comment="EMERGENCY NAT all local nets to WAN"
+
+ใใใ
+/interface bridge port set [find bridge=bridge-LAN interface=ether3] pvid=1 frame-types=admit-all ingress-filtering=yes
+/interface bridge port set [find bridge=bridge-LAN interface=ether4] pvid=1 frame-types=admit-all ingress-filtering=yes
+
+/interface bridge vlan set [find bridge=bridge-LAN vlan-ids=20] tagged=bridge-LAN,ether3,ether4 untagged=""
+/interface bridge vlan set [find bridge=bridge-LAN vlan-ids=30] tagged=bridge-LAN,ether3,ether4 untagged=""
+/interface bridge vlan set [find bridge=bridge-LAN vlan-ids=50] tagged=bridge-LAN,ether3,ether4 untagged=""
+/interface bridge vlan set [find bridge=bridge-LAN vlan-ids=99] tagged=bridge-LAN,ether3,ether4 untagged=""
+
+/routing rule disable [find comment="FULL-TUNNEL main via WARP only"]
+/routing rule disable [find comment="FULL-TUNNEL VLAN20 via WARP only"]
+/routing rule disable [find comment="FULL-TUNNEL VLAN99 via WARP only"]
+
+/ip firewall address-list disable [find list=WARP-ONLY address=192.168.88.0/24]
+/ip firewall address-list disable [find list=WARP-ONLY address=172.22.20.0/24]
+/ip firewall address-list disable [find list=WARP-ONLY address=172.22.99.0/24]
+
+/ip dhcp-server enable [find]
+/ip dns set allow-remote-requests=yes servers=1.1.1.1,8.8.8.8
+/ip firewall nat enable [find chain=srcnat out-interface=ether1 action=masquerade]
